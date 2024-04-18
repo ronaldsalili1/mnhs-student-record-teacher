@@ -9,7 +9,6 @@ import useSubjectDetail from '../../hooks/SubejctDetailPage/useSubjectDetail';
 import StudentSearchForm from './components/StudentSearchForm';
 import NewStudentsModal from './components/NewStudentsModal';
 import StudentDetailModal from './components/StudentDetailModal';
-import config from '../../config';
 import { getTemplateDlLink } from '../../helpers/grade';
 
 const { Link } = Typography;

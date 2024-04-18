@@ -11,8 +11,8 @@ import Navigation from './layouts/Navigation';
 
 import LoginPage from './containers/LoginPage/LoginPage';
 
-// Student Page
-import StudentPage from './containers/StudentPage/StudentPage';
+// Advise Page
+import AdviseePage from './containers/AdviseePage/AdviseePage';
 
 // Subject Page
 import SubjectPage from './containers/SubjectPage/SubjectPage';
@@ -40,8 +40,8 @@ const router = createBrowserRouter(
             </Route>
             <Route element={<Navigation/>}>
                 <Route
-                    path="students"
-                    element={<StudentPage/>}
+                    path="advisees"
+                    element={<AdviseePage/>}
                 />
                 <Route
                     path="subjects"

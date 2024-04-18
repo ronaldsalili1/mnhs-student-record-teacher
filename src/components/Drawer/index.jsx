@@ -2,15 +2,8 @@ import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, Flex } from 'antd';
 import {
-    UserOutlined,
-    ClockCircleOutlined,
-    HomeOutlined,
-    OrderedListOutlined,
     IdcardOutlined,
-    SolutionOutlined,
-    SnippetsOutlined,
     CalculatorOutlined,
-    FormOutlined,
 } from '@ant-design/icons';
 
 import mnhsLogo from '../../images/mnhs-logo.png';
@@ -29,15 +22,15 @@ function getItem(label, key, icon, children, theme) {
 
 const items = [
     getItem('Subjects', 'subjects', <CalculatorOutlined />),
-    getItem('Students', 'students', <IdcardOutlined />),
+    getItem('Advisees', 'advisees', <IdcardOutlined />),
     getItem('Grade Submission', 'grade-submission', <IdcardOutlined />),
     getItem('Profile', 'profile', <IdcardOutlined />),
 ];
 
 const getActiveItem = ({ pathname }) => {
     switch (true) {
-        case /\/students/.test(pathname):
-            return ['students'];
+        case /\/advisees/.test(pathname):
+            return ['advisees'];
         case /\/subjects/.test(pathname):
             return ['subjects'];
         case /\/grade-submission/.test(pathname):
