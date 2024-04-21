@@ -39,7 +39,6 @@ const AdviseePage = () => {
     const [confirmation, setConfirmation] = useState(false);
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [selectedSection, setSelectedSection] = useState(null);
-    console.log('🚀 ~ selectedSection:', selectedSection);
 
     const onAddStudentConfirmation = () => {
         createSectionStudents({

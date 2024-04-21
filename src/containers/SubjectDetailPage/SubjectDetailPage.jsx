@@ -1,38 +1,49 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Table, Typography, Flex, Button, Grid, Divider, Modal } from 'antd';
 import { PlusSquareFilled, ExclamationCircleFilled, CloudDownloadOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
 import { formatFullName, getParamsFromUrl, objectToQueryString } from '../../helpers/general';
 import { NavigationContext } from '../../providers/NavigationProvider';
+import { AuthContext } from '../../providers/AuthProvider';
 import useSubjectDetail from '../../hooks/SubejctDetailPage/useSubjectDetail';
 import StudentSearchForm from './components/StudentSearchForm';
-import NewStudentsModal from './components/NewStudentsModal';
-import StudentDetailModal from './components/StudentDetailModal';
 import { getTemplateDlLink } from '../../helpers/grade';
+import StudentSearchModal from '../../components/StudentSearchModal';
+import StudentConfirmationModal from './components/StudentConfirmationModal';
 
 const { Link } = Typography;
 const { confirm } = Modal;
 
 const SubjectDetailPage = () => {
     const layoutState = useContext(NavigationContext);
-    const { setTitle, setBreadcrumbItems } = layoutState;
+    const { activeSemester } = useContext(AuthContext);
+    const { setTitle, setBreadcrumbItems, notificationApi } = layoutState;
     const query = getParamsFromUrl();
     const navigate = useNavigate();
     const location = useLocation();
     const { xs } = Grid.useBreakpoint();
 
-    const { subjectId } = useParams();
     const subjectDetailProps = useSubjectDetail();
-    const { loadingStudents, students, subject, meta, page, total, limit, getStudents, deleteSubjectStudentById, semesters } = subjectDetailProps;
+    const {
+        loadingStudents,
+        students,
+        subject,
+        meta,
+        page,
+        total,
+        limit,
+        getStudents,
+        deleteSubjectStudentById,
+        loadingSubmit,
+        createStudents,
+        enrolledStudents,
+    } = subjectDetailProps;
+        console.log('🚀 ~ students:', students);
 
-    const [newStudentsModal, setNewStudentsModal] = useState(false);
-    const [studentDetailModal, setStudentDetailModal] = useState(false);
-    const [selectedSemester, setSelectedSemester] = useState(null);
-
-    const activeSemester = useMemo(() => {
-        return semesters.find(semester => semester.status === 'active');
-    }, [semesters]);
+    const [addStudentsModal, setAddStudentsModal] = useState(false);
+    const [selectedStudents, setSelectedStudents] = useState([]);
+    const [confirmation, setConfirmation] = useState(false);
 
     const confirmDelete = (id) => {
         confirm({
@@ -77,9 +88,18 @@ const SubjectDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [subject]);
 
+    const onAddStudent = () => {
+        createStudents({
+            fields: {
+                student_ids: selectedStudents,
+            },
+        });
+    };
+
     useEffect(() => {
         if (meta?.code === 200) {
-            setNewStudentsModal(false);
+            setConfirmation(false);
+            setAddStudentsModal(false);
         }
     }, [meta]);
 
@@ -102,19 +122,30 @@ const SubjectDetailPage = () => {
                     title: 'Q1',
                     dataIndex: 'quarter_1',
                     key: 'quarter_1',
-                    render: data => data || '-',
+                    render: (_, record) => record?.grade?.quarter_1 || '-',
                 },
                 {
                     title: 'Q2',
                     dataIndex: 'quarter_2',
                     key: 'quarter_2',
-                    render: data => data || '-',
+                    render: (_, record) => record?.grade?.quarter_2 || '-',
                 },
                 {
                     title: 'Final',
                     dataIndex: 'final_grade',
                     key: 'final_grade',
-                    render: data => data || '-',
+                    render: (_, record) => {
+                        const { quarter_1, quarter_2 } = record?.grade || {};
+                        let grade;
+                        if (quarter_1 && !quarter_2) {
+                            grade = quarter_1;
+                        } else if (!quarter_1 && quarter_2) {
+                            grade = quarter_2;
+                        } else if (quarter_1 && quarter_2) {
+                            grade = (quarter_1 + quarter_2) / 2;
+                        }
+                        return grade ? Math.round(grade) : '-';
+                    },
                 },
             ],
         },
@@ -126,12 +157,6 @@ const SubjectDetailPage = () => {
             render: (_, record) => {
                 return (
                     <>
-                        <Link
-                            onClick={() => setStudentDetailModal(true)}
-                        >
-                            View
-                        </Link>
-                        <Divider type="vertical"/>
                         <Link
                             type="danger"
                             onClick={() => confirmDelete(record.subject_student_id)}
@@ -152,17 +177,13 @@ const SubjectDetailPage = () => {
                 gap={10}
                 style={{ margin: '10px 0px' }}
             >
-                <StudentSearchForm
-                    {...subjectDetailProps}
-                    activeSemester={activeSemester}
-                    setSelectedSemester={setSelectedSemester}
-                />
+                <StudentSearchForm {...subjectDetailProps}/>
                 <Button
                     type="primary"
                     icon={<PlusSquareFilled />}
                     htmlType="submit"
                     style={{ ...(xs && { width: '100%' }) }}
-                    onClick={() => setNewStudentsModal(true)}
+                    onClick={() => setAddStudentsModal(true)}
                 >
                     Add Students
                 </Button>
@@ -171,18 +192,20 @@ const SubjectDetailPage = () => {
                     icon={<CloudDownloadOutlined />}
                     htmlType="submit"
                     style={{ ...(xs && { width: '100%' }) }}
-                    onClick={() => window.open(getTemplateDlLink(activeSemester?._id || selectedSemester, subjectId), '_blank')}
+                    onClick={() => {
+                        if (!activeSemester) {
+                            notificationApi['error']({
+                                message: `The system is currently unable to provide access 
+                                                to download templates, as there is no active academic term 
+                                                or semester at the moment.`,
+                                placement: 'bottomRight',
+                            });
+                        } else {
+                            window.open(getTemplateDlLink(subject._id), '_blank');
+                        }
+                    }}
                 >
                     Download Template
-                </Button>
-                <Button
-                    type="primary"
-                    icon={<CloudUploadOutlined />}
-                    htmlType="submit"
-                    style={{ ...(xs && { width: '100%' }) }}
-                    onClick={() => setNewStudentsModal(true)}
-                >
-                    Upload Grades
                 </Button>
             </Flex>
             <Table
@@ -208,21 +231,41 @@ const SubjectDetailPage = () => {
                     pageSize: limit,
                 }}
             />
-            <NewStudentsModal
-                title="Add Student"
+            <StudentSearchModal
+                title="Students"
+                width={800}
+                open={addStudentsModal}
                 destroyOnClose={true}
-                width={450}
-                open={newStudentsModal}
-                onCancel={() => setNewStudentsModal(false)}
-                subjectDetailProps={subjectDetailProps}
+                maskClosable={false}
+                onCancel={() => setAddStudentsModal(false)}
+                selectedStudents={selectedStudents}
+                setSelectedStudents={setSelectedStudents}
+                searchBySection={true}
+                exclude={enrolledStudents}
+                excludeStudentsInSection={false}
+                actionComponent={(
+                    <Button
+                        disabled={selectedStudents.length === 0}
+                        size="large"
+                        type="primary"
+                        icon={<PlusSquareFilled />}
+                        htmlType="submit"
+                        style={{ width: '100%', marginTop: 10 }}
+                        onClick={() => setConfirmation(true)}
+                    >
+                        Save Selected Students
+                    </Button>
+                )}
             />
-            <StudentDetailModal
-                title="Student Detail (Refactor)"
+            <StudentConfirmationModal
+                title="Confirmation"
                 destroyOnClose={true}
                 width={450}
-                open={studentDetailModal}
-                onCancel={() => setStudentDetailModal(false)}
-                // subjectDetailProps={subjectDetailProps}
+                open={confirmation}
+                onCancel={() => setConfirmation(false)}
+                subject={subject}
+                loadingSubmit={loadingSubmit}
+                onConfirm={onAddStudent}
             />
         </>
     );

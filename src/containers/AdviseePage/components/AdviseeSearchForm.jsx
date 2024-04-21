@@ -5,6 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 
 import { getParamsFromUrl, objectToQueryString } from '../../../helpers/general';
 import SectionSelection from '../../../components/SearchFormItems/SectionSelection';
+import SemesterSelection from '../../../components/SearchFormItems/SemesterSelection';
 
 const { Item } = Form;
 
@@ -26,10 +27,11 @@ const AdviseeSearchForm = (props) => {
             ref={searchFormRef}
             initialValues={query}
             onFinish={values => {
-                const { section_id, keyword } = values;
+                const { section_id, keyword, semester_id } = values;
                 const queryObj = {
                     ...(page && { page }),
                     ...(limit && { limit }),
+                    ...(semester_id && { semester_id }),
                     ...(section_id && { section_id }),
                     ...(keyword && { keyword }),
                 };
@@ -44,6 +46,19 @@ const AdviseeSearchForm = (props) => {
             }}
         >
             <Item
+                name="semester_id"
+                style={{
+                    ...commonItemStyle,
+                    ...(xs && { width: '100%' }),
+                }}
+            >
+                <SemesterSelection
+                    formRef={searchFormRef}
+                    name="semester_id"
+                    defaultValue={query?.semester_id ? query.semester_id : null}
+                />
+            </Item>
+            <Item
                 name="section_id"
                 style={{
                     ...commonItemStyle,
@@ -53,6 +68,7 @@ const AdviseeSearchForm = (props) => {
                 <SectionSelection
                     formRef={searchFormRef}
                     name="section_id"
+                    defaultValue={query?.section_id ? query.section_id : null}
                 />
             </Item>
             <Item

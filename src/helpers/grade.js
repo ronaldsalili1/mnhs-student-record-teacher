@@ -6,6 +6,6 @@ import config from '../config';
  * @param {string} subjectId 
  * @returns 
  */
-export const getTemplateDlLink = (semesterId, subjectId) => {
-    return `${config.api}/teacher/grades/download/template?subject_id=${subjectId}&semester_id=${semesterId}`;
+export const getTemplateDlLink = (subjectId) => {
+    return `${config.api}/teacher/grades/download/template?subject_id=${subjectId}`;
 };

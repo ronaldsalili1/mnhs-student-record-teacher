@@ -25,6 +25,9 @@ import GradeSubmissionDetailPage from './containers/GradeSubmissionDetailPage/Gr
 // Profile
 import ProfilePage from './containers/ProfilePage/ProfilePage';
 
+// Reset Password Page
+import ResetPasswordPage from './containers/ResetPasswordPage/ResetPasswordPage';
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
@@ -36,6 +39,10 @@ const router = createBrowserRouter(
                 <Route
                     path="login"
                     element={<LoginPage/>}
+                />
+                <Route
+                    path="password-reset/:token"
+                    element={<ResetPasswordPage/>}
                 />
             </Route>
             <Route element={<Navigation/>}>

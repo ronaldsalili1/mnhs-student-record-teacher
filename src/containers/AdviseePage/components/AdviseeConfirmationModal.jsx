@@ -8,11 +8,9 @@ const AdviseeConfirmationModal = ({ selectedSection, setSelectedSection, loading
     const { teacher } = useContext(AuthContext);
     const sections = teacher?.sections || [];
     const sectionCount = sections.length;
-    console.log('🚀 ~ sectionCount:', sectionCount);
 
     useEffect(() => {
         if (sectionCount === 1) {
-            console.log('@@@@@@@@@@@@@');
             setSelectedSection(sections[0]._id);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

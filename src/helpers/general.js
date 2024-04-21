@@ -106,3 +106,16 @@ export const isNil = (value) => {
 export const formatFullName = ({ first_name, last_name, middle_name, suffix }) => {
     return `${last_name}, ${first_name} ${middle_name || ''} ${suffix || ''}`;
 };
+
+
+/**
+ * Checks if an email address is valid.
+ * @param {string} email - The email address to validate.
+ * @returns {boolean} Returns true if the email address is valid, false otherwise.
+ */
+export const isValidEmail = (email) => {
+    // Regular expression pattern for validating email addresses
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    return emailPattern.test(email);
+};

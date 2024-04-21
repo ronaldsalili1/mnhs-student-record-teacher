@@ -6,6 +6,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { filterOption, getParamsFromUrl, objectToQueryString } from '../../../helpers/general';
 import SkeletonSelect from '../../../components/CustomUI/SkeletonSelect';
 import { formatSemester } from '../../../helpers/semester';
+import SemesterSelection from '../../../components/SearchFormItems/SemesterSelection';
 
 const { Item } = Form;
 
@@ -19,17 +20,8 @@ const StudentSearchForm = (props) => {
     const query = getParamsFromUrl();
     const navigate = useNavigate();
     const location = useLocation();
-    const { getStudents, loadingSemesters, semesters, activeSemester, setSelectedSemester } = props;
+    const { getStudents } = props;
     const { page, limit } = query || {};
-
-    useEffect(() => {
-        if (!query.semester_id && activeSemester) {
-            searchFormRef.current?.setFieldsValue({
-                semester_id: activeSemester._id,
-            });
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [semesters]);
     
     return (
         <Form
@@ -44,7 +36,6 @@ const StudentSearchForm = (props) => {
                     ...(keyword && { keyword }),
                 };
                 getStudents(queryObj);
-                setSelectedSemester(semester_id);
                 const queryString = objectToQueryString(queryObj);
                 navigate(`${location.pathname}${queryString}`);
             }}
@@ -61,18 +52,10 @@ const StudentSearchForm = (props) => {
                     ...(xs && { width: '100%' }),
                 }}
             >
-                <SkeletonSelect
-                    loading={loadingSemesters}
-                    placeholder="Select Semester"
-                    showSearch
-                    filterOption={filterOption}
-                    options={semesters.map(semester => {
-                        return {
-                            label: formatSemester(semester),
-                            value: semester._id,
-                        };
-                    })}
-                    style={{ width: 260, ...(xs && { width: '100%' }) }}
+                <SemesterSelection
+                    formRef={searchFormRef}
+                    name="semester_id"
+                    defaultValue={query?.semester_id ? query.semester_id : null}
                 />
             </Item>
             <Item

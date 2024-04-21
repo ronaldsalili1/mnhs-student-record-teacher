@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Empty, Select, Spin } from 'antd';
+import { Grid, Empty, Spin } from 'antd';
 
 import { get } from '../../helpers/request';
+import SkeletonSelect from '../CustomUI/SkeletonSelect';
 
 
-const SectionSelection = ({ formRef, name }) => {
+const SectionSelection = ({ formRef, name, defaultValue }) => {
     const { xs } = Grid.useBreakpoint();
     const navigate = useNavigate();
 
-    const [loadingSections, setLoadingSections] = useState();
+    const [loadingSections, setLoadingSections] = useState(false);
+    const [loadingSectionsInit, setLoadingSectionsInit] = useState(true);
     const [sections, setSections] = useState([]);
     const [sectionSearchKey, setSectionSearchKey] = useState('');
 
@@ -26,11 +28,13 @@ const SectionSelection = ({ formRef, name }) => {
         });
         if (response?.meta?.code !== 200) {
             setLoadingSections(false);
+            setLoadingSectionsInit(false);
             return;
         }
 
         setSections(response?.data?.sections);
         setLoadingSections(false);
+        setLoadingSectionsInit(false);
     };
 
     useEffect(() => {
@@ -44,8 +48,10 @@ const SectionSelection = ({ formRef, name }) => {
     }, [sectionSearchKey]);
     
     return (
-        <Select
+        <SkeletonSelect
+            loading={loadingSectionsInit}
             placeholder="Select Section"
+            defaultValue={defaultValue}
             allowClear
             showSearch
             notFoundContent={loadingSections ? <Spin size="small" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>}

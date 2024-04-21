@@ -17,6 +17,7 @@ const theme = {
 
         // Custom Colors
         colorWhite,
+        colorSider,
     },
     components: {
         Layout: {

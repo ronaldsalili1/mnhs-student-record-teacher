@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Modal, Form, Input, Grid, Button, Flex, Table } from 'antd';
+import { Modal, Form, Input, Grid, Button, Flex, Table, Alert } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 import { formatFullName } from '../../helpers/general';
@@ -17,6 +17,7 @@ const StudentSearchModal = ({ searchBySection=false, actionComponent, selectedSt
     const { xs } = Grid.useBreakpoint();
     const navigate = useNavigate();
 
+    const [meta, setMeta] = useState(null);
     const [loadingStudents, setLoadingStudents] = useState();
     const [students, setStudents] = useState([]);
     const [total, setTotal] = useState(0);
@@ -74,9 +75,11 @@ const StudentSearchModal = ({ searchBySection=false, actionComponent, selectedSt
         });
         if (response?.meta?.code !== 200) {
             setLoadingStudents(false);
+            setMeta(response?.meta);
             return;
         }
 
+        setMeta(null);
         setTotal(response?.data?.total);
         setPage(response?.data?.page);
         setLimit(response?.data?.limit);
@@ -108,6 +111,14 @@ const StudentSearchModal = ({ searchBySection=false, actionComponent, selectedSt
             { ...rest }
             footer={null}
         >
+            {
+                meta &&
+                <Alert
+                    message={meta.message}
+                    type="error"
+                    showIcon
+                />
+            }
             <Flex
                 justify="end"
                 wrap="wrap"

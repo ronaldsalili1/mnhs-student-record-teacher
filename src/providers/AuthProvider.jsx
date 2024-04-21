@@ -5,7 +5,7 @@ import useAuth from '../hooks/useAuth';
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
-    const { teacher, checkAuthStatus } = useAuth();
+    const { teacher, activeSemester, checkAuthStatus, setTeacher } = useAuth();
 
     useEffect(() => {
         checkAuthStatus();
@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ teacher }}
+            value={{ teacher, activeSemester, setTeacher }}
         >
             {children}
         </AuthContext.Provider>

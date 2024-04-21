@@ -21,8 +21,8 @@ const DownloadTemplateModal = ({ gradeSubmissionDetailProps, activeSemester, set
                     semester_id: activeSemester._id,
                 } : {}}
                 onFinish={values => {
-                    const { semester_id, subject_id } =  values;
-                    window.open(getTemplateDlLink(semester_id, subject_id), '_blank');
+                    const { subject_id } =  values;
+                    window.open(getTemplateDlLink(subject_id), '_blank');
                     setDlTempModal(false);
                 }}
                 style={{ width: 400, marginTop: 20 }}

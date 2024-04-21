@@ -12,12 +12,9 @@ const useSubjectDetail = () => {
     const [limit, setLimit] = useState(10);
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [students, setStudents] = useState([]);
+    const [enrolledStudents, setEnrolledStudents] = useState([]);
     const [loadingSubject, setLoadingSubject] = useState(false);
     const [subject, setSubject] = useState(null);
-    const [loadingStudentOpts, setLoadingStudentOpts] = useState(false);
-    const [studentOpts, setStudentOpts] = useState([]);
-    const [loadingSemesters, setLoadingSemesters] = useState(false);
-    const [semesters, setSemesters] = useState([]);
     const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [loadingDeleteSubjectStudent, setLoadingDeleteSubjectStudent] = useState(false);
 
@@ -31,6 +28,17 @@ const useSubjectDetail = () => {
 
     const resetMeta = () => {
         setMeta(null);
+    };
+
+    const getEnrolledStudents = async () => {
+        const newQuery = { subject_id: subjectId };
+        const response = await get({ uri: '/teacher/subjects/students/enrolled', query: newQuery, navigate, location });
+        if (response?.meta?.code !== 200) {
+            setMeta(response?.meta);
+            return;
+        }
+
+        setEnrolledStudents(response?.data?.students);
     };
 
     const getStudents = async (query) => {
@@ -70,46 +78,7 @@ const useSubjectDetail = () => {
         setLoadingSubject(false);
     };
 
-    const getStudentOptions = async (semesterId) => {
-        setLoadingStudentOpts(true);
-
-        const response = await get({
-            uri: '/teacher/subjects/students/options',
-            navigate,
-            location,
-            query: {
-                subject_id: subjectId,
-                semester_id: semesterId,
-            } });
-        if (response?.meta?.code !== 200) {
-            setMeta(response?.meta);
-            setLoadingStudentOpts(false);
-            return;
-        }
-
-        setStudentOpts(response?.data?.students);
-        setLoadingStudentOpts(false);
-    };
-
-    const getSemesterOptions = async () => {
-        setLoadingSemesters(true);
-
-        const response = await get({
-            uri: '/teacher/semesters/options/all',
-            navigate,
-            location,
-        });
-        if (response?.meta?.code !== 200) {
-            setMeta(response?.meta);
-            setLoadingSemesters(false);
-            return;
-        }
-
-        setSemesters(response?.data?.semesters);
-        setLoadingSemesters(false);
-    };
-
-    const createStudent = async ({ fields }) => {
+    const createStudents = async ({ fields }) => {
         setLoadingSubmit(true);
 
         const body = {
@@ -151,8 +120,8 @@ const useSubjectDetail = () => {
     };
 
     useEffect(() => {
+        getEnrolledStudents();
         getStudents(query);
-        getSemesterOptions();
         subjectId && getSubjectById();
 
         return () => {
@@ -172,20 +141,13 @@ const useSubjectDetail = () => {
 
             if (meta.code === 200) {
                 getStudents(query);
+                getEnrolledStudents();
             }
         }
 
         return () => resetMeta();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [meta]);
-
-    useEffect(() => {
-        if (semesters.length > 0) {
-            const activeSemester = semesters.find(semester => semester.status === 'active');
-            activeSemester && getStudentOptions(activeSemester._id);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [semesters, meta]);
 
     return {
         meta,
@@ -198,15 +160,11 @@ const useSubjectDetail = () => {
         students,
         loadingSubject,
         subject,
-        loadingStudentOpts,
-        studentOpts,
-        getSemesterOptions,
-        loadingSemesters,
-        semesters,
         loadingSubmit,
-        createStudent,
+        createStudents,
         deleteSubjectStudentById,
         loadingDeleteSubjectStudent,
+        enrolledStudents,
     };
 };
 
