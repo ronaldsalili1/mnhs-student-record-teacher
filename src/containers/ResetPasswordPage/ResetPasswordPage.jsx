@@ -3,6 +3,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Input, Flex, theme, Typography, Button, Alert } from 'antd';
 
 import backgroundImg from '../../images/mnhs-bg.webp';
+import mnhsLogo from '../../images/mnhs-logo.webp';
 import { post } from '../../helpers/request';
 
 const { Text } = Typography;
@@ -88,15 +89,33 @@ const ResetPasswordPage = () => {
                         showIcon
                     />
                 }
-                <Text
-                    style={{
-                        fontSize: 20,
-                        fontWeight: 700,
-                        marginBottom: 10,
-                    }}
+                <Flex
+                    align="center"
+                    style={{ marginBottom: 15 }}
                 >
-                    Reset Password
-                </Text>
+                    <img
+                        src={mnhsLogo}
+                        alt="MNHS Logo"
+                        width={100}
+                    />
+                    <div
+                        style={{
+                            height: 80,
+                            width: 1,
+                            backgroundColor: '#ce1a21',
+                            margin: '0px 10px',
+                        }}
+                    />
+                    <Text
+                        style={{
+                            fontSize: 35,
+                            fontWeight: 600,
+                            lineHeight: 1.1,
+                        }}
+                    >
+                        MNHS Student Record System
+                    </Text>
+                </Flex>
                 <div>
                     <Text strong>New Password:</Text>
                     <Input.Password

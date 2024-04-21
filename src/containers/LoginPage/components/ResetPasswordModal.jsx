@@ -60,7 +60,7 @@ const ResetPasswordModal = ({ requestResetPassword, loadingResetPassReq, setModa
                 </div>
                 <Button
                     disabled={email === '' || emailErr}
-                    loadingResetPassReq={loadingResetPassReq}
+                    loading={loadingResetPassReq}
                     type="primary"
                     size="large"
                     onClick={() => {
