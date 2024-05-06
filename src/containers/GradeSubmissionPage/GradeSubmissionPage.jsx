@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Table, Typography, Flex, Grid, Button } from 'antd';
 import { PlusSquareFilled } from '@ant-design/icons';
 
-import { capitalizeFirstLetter, formatFullName, getParamsFromUrl, objectToQueryString } from '../../helpers/general';
+import { formatFullName, getParamsFromUrl, objectToQueryString } from '../../helpers/general';
 import { NavigationContext } from '../../providers/NavigationProvider';
 import useGradeSubmission from '../../hooks/useGradeSubmission';
 import dayjs from 'dayjs';
@@ -21,8 +21,6 @@ const GradeSubmissionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const {
-        meta,
-        resetMeta,
         getGradeSubmissions,
         loadingGradeSubmissions,
         total,

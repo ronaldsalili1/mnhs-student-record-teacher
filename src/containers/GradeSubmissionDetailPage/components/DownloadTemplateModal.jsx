@@ -1,14 +1,24 @@
-import { Flex, Button, Modal, Form } from 'antd';
+import { useContext, useEffect, useMemo, useRef } from 'react';
+import { Flex, Button, Modal, Form, Select } from 'antd';
 
-import SkeletonSelect from '../../../components/CustomUI/SkeletonSelect';
-import { filterOption } from '../../../helpers/general';
 import { getTemplateDlLink } from '../../../helpers/grade';
-import { formatSemester } from '../../../helpers/semester';
+import SubjectSelection from '../../../components/SearchFormItems/SubjectSelection';
+import { AuthContext } from '../../../providers/AuthProvider';
 
 const { Item } = Form;
 
-const DownloadTemplateModal = ({ gradeSubmissionDetailProps, activeSemester, setDlTempModal, ...rest }) => {
-    const { semesters, loadingSemesters, subjects, loadingSubjects } = gradeSubmissionDetailProps;
+const DownloadTemplateModal = ({ setDlTempModal, ...rest }) => {
+    const formRef = useRef(null);
+    const { teacher } = useContext(AuthContext);
+    const sections = useMemo(() => {
+        return teacher?.sections || [];
+    }, [teacher]);
+
+    useEffect(() => {
+        if (sections.length !== 0 && sections.length === 1) {
+            formRef.current?.setFieldValue('section_id', sections[0]._id);
+        }
+    }, [sections]);
 
     return (
         <Modal
@@ -16,39 +26,31 @@ const DownloadTemplateModal = ({ gradeSubmissionDetailProps, activeSemester, set
             footer={null}
         >
             <Form
+                ref={formRef}
                 layout="vertical"
-                initialValues={activeSemester ? {
-                    semester_id: activeSemester._id,
-                } : {}}
                 onFinish={values => {
-                    const { subject_id } =  values;
-                    window.open(getTemplateDlLink(subject_id), '_blank');
+                    const { subject_id, section_id } =  values;
+                    window.open(getTemplateDlLink(subject_id, section_id), '_blank');
                     setDlTempModal(false);
                 }}
                 style={{ width: 400, marginTop: 20 }}
             >
                 <Item
-                    name="semester_id"
-                    label="Semester:"
+                    name="section_id"
+                    label="Section:"
                     rules={[
                         {
                             required: true,
-                            message: 'Semester is required',
+                            message: 'Section is required',
                         },
                     ]}
                 >
-                    <SkeletonSelect
-                        disabled={true}
-                        loading={loadingSemesters}
-                        placeholder="Select Semester"
-                        showSearch
-                        filterOption={filterOption}
-                        options={semesters.map(semester => {
-                            return {
-                                label: formatSemester(semester),
-                                value: semester._id,
-                            };
-                        })}
+                    <Select
+                        placeholder="Select Section"
+                        options={sections.map(section => ({
+                            label: section.name,
+                            value: section._id,
+                        }))}
                     />
                 </Item>
                 <Item
@@ -61,17 +63,10 @@ const DownloadTemplateModal = ({ gradeSubmissionDetailProps, activeSemester, set
                         },
                     ]}
                 >
-                    <SkeletonSelect
-                        loading={loadingSubjects}
-                        placeholder="Select Subject"
-                        showSearch
-                        filterOption={filterOption}
-                        options={subjects.map(subject => {
-                            return {
-                                label: subject.name,
-                                value: subject._id,
-                            };
-                        })}
+                    <SubjectSelection
+                        formRef={formRef}
+                        name="subject_id"
+                        width="100%"
                     />
                 </Item>
                 <Item>

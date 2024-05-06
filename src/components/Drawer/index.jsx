@@ -4,6 +4,9 @@ import { Layout, Menu, Flex } from 'antd';
 import {
     IdcardOutlined,
     CalculatorOutlined,
+    UserOutlined,
+    SendOutlined,
+    FileExcelOutlined,
 } from '@ant-design/icons';
 
 import mnhsLogo from '../../images/mnhs-logo.webp';
@@ -23,8 +26,9 @@ function getItem(label, key, icon, children, theme) {
 const items = [
     getItem('Subjects', 'subjects', <CalculatorOutlined />),
     getItem('Advisees', 'advisees', <IdcardOutlined />),
-    getItem('Grade Submission', 'grade-submission', <IdcardOutlined />),
-    getItem('Profile', 'profile', <IdcardOutlined />),
+    getItem('Grade Submission', 'grade-submission', <SendOutlined />),
+    getItem('Generate Files', 'generate', <FileExcelOutlined />),
+    getItem('Profile', 'profile', <UserOutlined />),
 ];
 
 const getActiveItem = ({ pathname }) => {
@@ -35,6 +39,8 @@ const getActiveItem = ({ pathname }) => {
             return ['subjects'];
         case /\/grade-submission/.test(pathname):
             return ['grade-submission'];
+        case /\/generate/.test(pathname):
+            return ['generate'];
         case /\/profile/.test(pathname):
             return ['profile'];
         default:

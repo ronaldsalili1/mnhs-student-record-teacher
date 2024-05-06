@@ -39,7 +39,6 @@ const SubjectDetailPage = () => {
         createStudents,
         enrolledStudents,
     } = subjectDetailProps;
-        console.log('🚀 ~ students:', students);
 
     const [addStudentsModal, setAddStudentsModal] = useState(false);
     const [selectedStudents, setSelectedStudents] = useState([]);

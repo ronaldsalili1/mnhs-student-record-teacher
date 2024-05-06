@@ -28,6 +28,9 @@ import ProfilePage from './containers/ProfilePage/ProfilePage';
 // Reset Password Page
 import ResetPasswordPage from './containers/ResetPasswordPage/ResetPasswordPage';
 
+// Generate Files Page
+import GenerateFilePage from './containers/GenerateFilePage/GenerateFilePage';
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
@@ -57,6 +60,10 @@ const router = createBrowserRouter(
                 <Route
                     path="grade-submission"
                     element={<GradeSubmissionPage/>}
+                />
+                <Route
+                    path="generate"
+                    element={<GenerateFilePage/>}
                 />
                 <Route
                     path="profile"

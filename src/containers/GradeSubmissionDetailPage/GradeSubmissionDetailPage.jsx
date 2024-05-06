@@ -1,10 +1,11 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Table, Typography, Flex, Button, Grid, Divider, Modal, Form, Space, Alert, Upload } from 'antd';
 import { ExclamationCircleFilled, CloudDownloadOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
 import config from '../../config';
 import { NavigationContext } from '../../providers/NavigationProvider';
+import { AuthContext } from '../../providers/AuthProvider';
 import { formatFullName, removeObjNilValues } from '../../helpers/general';
 import DownloadTemplateModal from './components/DownloadTemplateModal';
 import SubmitGradesConfirmation from './components/SubmitGradesConfirmation';
@@ -17,6 +18,7 @@ const { confirm } = Modal;
 
 const GradeSubmissionDetailPage = () => {
     const layoutState = useContext(NavigationContext);
+    const { activeSemester } = useContext(AuthContext);
     const { setTitle, setBreadcrumbItems, notificationApi } = layoutState;
     const navigate = useNavigate();
     const { xs } = Grid.useBreakpoint();
@@ -25,8 +27,6 @@ const GradeSubmissionDetailPage = () => {
     const [form] = Form.useForm();
     const gradeSubmissionDetailProps = useGradeSubmissionDetail();
     const {
-        semesters,
-        getSubjectsOptions,
         getReviewerOptions,
         createOrUpdateGradeSubmission,
         meta,
@@ -44,11 +44,6 @@ const GradeSubmissionDetailPage = () => {
     const [dlTempModal, setDlTempModal] = useState(false);
     const [submitModal, setSubmitModal] = useState(false);
     const [editingKey, setEditingKey] = useState('');
-
-    const activeSemester = useMemo(() => {
-        return semesters.find(semester => semester.status === 'active') ;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [semesters]);
 
     const uploadProps = {
         accept: '.xlsx',
@@ -263,7 +258,7 @@ const GradeSubmissionDetailPage = () => {
     useEffect(() => {
         setBreadcrumbItems([
             {
-                title: 'Subjects',
+                title: 'Grade Submission',
                 href: '',
                 onClick: (e) => {
                     e.preventDefault();
@@ -412,7 +407,6 @@ const GradeSubmissionDetailPage = () => {
                                             placement: 'bottomRight',
                                         });
                                     } else {
-                                        getSubjectsOptions();
                                         setDlTempModal(true);
                                     }
                                 }}
@@ -436,12 +430,10 @@ const GradeSubmissionDetailPage = () => {
             }
             <DownloadTemplateModal
                 title="Download Grade Template"
-                destroyOnClose={true}
+                // destroyOnClose={true}
                 width={450}
                 open={dlTempModal}
                 onCancel={() => setDlTempModal(false)}
-                gradeSubmissionDetailProps={gradeSubmissionDetailProps}
-                activeSemester={activeSemester}
                 setDlTempModal={setDlTempModal}
             />
             <SubmitGradesConfirmation
