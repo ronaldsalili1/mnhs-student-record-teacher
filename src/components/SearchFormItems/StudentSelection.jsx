@@ -15,7 +15,7 @@ const StudentSelection = ({ formRef, name, defaultValue, width, query }) => {
     const [students, setStudents] = useState([]);
     const [studentSearchKey, setStudentSearchKey] = useState('');
 
-    const getSubjectOptions = async () => {
+    const getStudentOptions = async () => {
         setLoadingStudents(true);
 
         const response = await get({
@@ -41,7 +41,7 @@ const StudentSelection = ({ formRef, name, defaultValue, width, query }) => {
     useEffect(() => {
         let timeout;
         timeout = setTimeout(() => {
-            getSubjectOptions();
+            getStudentOptions();
         }, 500);
 
         return () => timeout && clearTimeout(timeout);
@@ -70,7 +70,7 @@ const StudentSelection = ({ formRef, name, defaultValue, width, query }) => {
             }}
             onClear={() => {
                 setStudentSearchKey('');
-                getSubjectOptions();
+                getStudentOptions();
             }}
             style={{ width: width || 200, ...(xs && { width: '100%' }) }}
         />

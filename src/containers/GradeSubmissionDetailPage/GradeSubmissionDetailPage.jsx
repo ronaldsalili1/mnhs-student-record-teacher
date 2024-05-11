@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Table, Typography, Flex, Button, Grid, Divider, Modal, Form, Space, Alert, Upload } from 'antd';
 import { ExclamationCircleFilled, CloudDownloadOutlined, CloudUploadOutlined } from '@ant-design/icons';
@@ -133,74 +133,82 @@ const GradeSubmissionDetailPage = () => {
         }
     };
 
-    const columns = [
-        {
-            title: 'Name (Last, First, Middle, Suffix)',
-            dataIndex: 'name',
-            key: 'name',
-            render: (_, record) => formatFullName(record.student),
-        },
-        {
-            title: 'LRN',
-            dataIndex: 'lrn',
-            key: 'lrn',
-            render: (_, record) => record.student.lrn,
-        },
-        {
-            title: 'Grade',
-            dataIndex: 'grade',
-            key: 'grade',
-            width: 100,
-            onCell: (record) => ({
-                record,
-                inputType: 'number',
-                dataIndex: 'grade',
-                title: 'grade',
-                editing: isEditing(record),
-            }),
-            render: data => data || '-',
-        },
-        {
-            title: 'Action',
-            dataIndex: 'action',
-            key: 'action',
-            width: 120,
-            render: (_, record) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Link
-                            onClick={() => save(record.key)}
-                            style={{
-                                marginRight: 8,
-                            }}
-                        >
-                            Save
-                        </Link>
-                        <Link onClick={cancel}>
-                            <a>Cancel</a>
-                        </Link>
-                    </span>
-                ) : (
-                    <>
-                        <Link
-                            disabled={editingKey !== ''}
-                            onClick={() => edit(record)}
-                        >
-                            Edit
-                        </Link>
-                        <Divider type="vertical"/>
-                        <Link
-                            type="danger"
-                            onClick={() => confirmDelete(record._id)}
-                        >
-                            Delete
-                        </Link>    
-                    </>
-                );
+    const columns = useMemo(() => {
+        const cols = [
+            {
+                title: 'Name (Last, First, Middle, Suffix)',
+                dataIndex: 'name',
+                key: 'name',
+                render: (_, record) => formatFullName(record.student),
             },
-        },
-    ];
+            {
+                title: 'LRN',
+                dataIndex: 'lrn',
+                key: 'lrn',
+                render: (_, record) => record.student.lrn,
+            },
+            {
+                title: 'Grade',
+                dataIndex: 'grade',
+                key: 'grade',
+                width: 100,
+                onCell: (record) => ({
+                    record,
+                    inputType: 'number',
+                    dataIndex: 'grade',
+                    title: 'grade',
+                    editing: isEditing(record),
+                }),
+                render: data => data || '-',
+            },
+        ];
+
+        if (!gradeSubmission || gradeSubmission?.status === 'pending') {
+            cols.push({
+                title: 'Action',
+                dataIndex: 'action',
+                key: 'action',
+                width: 120,
+                render: (_, record) => {
+                    const editable = isEditing(record);
+                    return editable ? (
+                        <span>
+                            <Link
+                                onClick={() => save(record.key)}
+                                style={{
+                                    marginRight: 8,
+                                }}
+                            >
+                                Save
+                            </Link>
+                            <Link onClick={cancel}>
+                                <a>Cancel</a>
+                            </Link>
+                        </span>
+                    ) : (
+                        <>
+                            <Link
+                                disabled={editingKey !== ''}
+                                onClick={() => edit(record)}
+                            >
+                                Edit
+                            </Link>
+                            <Divider type="vertical"/>
+                            <Link
+                                type="danger"
+                                onClick={() => confirmDelete(record._id)}
+                            >
+                                Delete
+                            </Link>    
+                        </>
+                    );
+                },
+            });
+        }
+
+        return cols;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gradeSubmission]);
 
     const handleSubmit = values => {
         const fields = {

@@ -106,5 +106,9 @@ export default {
             label: 'Approved',
             value: 'approved',
         },
+        {
+            label: 'Rejected',
+            value: 'rejected',
+        },
     ],
 };
