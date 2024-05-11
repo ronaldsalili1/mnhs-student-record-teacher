@@ -45,7 +45,7 @@ const StudentSearchForm = (props) => {
                 gap: 10,
             }}
         >
-            <Item
+            {/* <Item
                 name="semester_id"
                 style={{
                     ...commonItemStyle,
@@ -57,7 +57,7 @@ const StudentSearchForm = (props) => {
                     name="semester_id"
                     defaultValue={query?.semester_id ? query.semester_id : null}
                 />
-            </Item>
+            </Item> */}
             <Item
                 name="keyword"
                 style={{

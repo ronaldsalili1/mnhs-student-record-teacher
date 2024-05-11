@@ -33,6 +33,8 @@ const GradeSubmissionDetailPage = () => {
         studentGradeData,
         setStudentGradeData,
         semester,
+        quarter,
+        setQuarter,
         setSemester,
         subject,
         setSubject,
@@ -68,6 +70,7 @@ const GradeSubmissionDetailPage = () => {
     
                 setSemester(response?.data?.semester || null);
                 setSubject(response?.data?.subject || null);
+                setQuarter(response?.data?.quarter || null);
                 setStudentGradeData(response?.data?.student_grade_data || []);
                 setLoadingGrades(false);
             } else if (status === 'error') {
@@ -121,8 +124,7 @@ const GradeSubmissionDetailPage = () => {
             
             // Update data
             const studentData = newStudentGradeData[studentGradeIndex];
-            studentData.quarter_1 = row.quarter_1;
-            studentData.quarter_2 = row.quarter_2;
+            studentData.grade = row.grade;
 
             setStudentGradeData(newStudentGradeData);
             setEditingKey('');
@@ -145,55 +147,18 @@ const GradeSubmissionDetailPage = () => {
             render: (_, record) => record.student.lrn,
         },
         {
-            title: 'Grades',
-            children: [
-                {
-                    title: 'Q1',
-                    dataIndex: 'quarter_1',
-                    key: 'quarter_1',
-                    width: 100,
-                    onCell: (record) => ({
-                        record,
-                        inputType: 'number',
-                        dataIndex: 'quarter_1',
-                        title: 'Q1',
-                        editing: isEditing(record),
-                    }),
-                    render: data => data || '-',
-                },
-                {
-                    title: 'Q2',
-                    dataIndex: 'quarter_2',
-                    key: 'quarter_2',
-                    width: 100,
-                    onCell: (record) => ({
-                        record,
-                        inputType: 'number',
-                        dataIndex: 'quarter_2',
-                        title: 'Q2',
-                        editing: isEditing(record),
-                    }),
-                    render: data => data || '-',
-                },
-                {
-                    title: 'Final',
-                    dataIndex: 'final_grade',
-                    key: 'final_grade',
-                    width: 100,
-                    render: (_, record) => {
-                        const { quarter_1, quarter_2 } = record;
-                        let grade;
-                        if (quarter_1 && !quarter_2) {
-                            grade = quarter_1;
-                        } else if (!quarter_1 && quarter_2) {
-                            grade = quarter_2;
-                        } else if (quarter_1 && quarter_2) {
-                            grade = (quarter_1 + quarter_2) / 2;
-                        }
-                        return grade ? Math.round(grade) : '-';
-                    },
-                },
-            ],
+            title: 'Grade',
+            dataIndex: 'grade',
+            key: 'grade',
+            width: 100,
+            onCell: (record) => ({
+                record,
+                inputType: 'number',
+                dataIndex: 'grade',
+                title: 'grade',
+                editing: isEditing(record),
+            }),
+            render: data => data || '-',
         },
         {
             title: 'Action',
@@ -241,13 +206,13 @@ const GradeSubmissionDetailPage = () => {
         const fields = {
             ...removeObjNilValues(values),
             subject_id: subject._id,
+            quarter,
             grades: studentGradeData.map(studentGrade => {
-                const { student, quarter_1, quarter_2 } = studentGrade || {};
+                const { student, grade } = studentGrade || {};
 
                 return {
                     student_id: student._id,
-                    ...(quarter_1 && { quarter_1 }),
-                    ...(quarter_2 && { quarter_2 }),
+                    ...(grade && { grade }),
                 };
             }),
         };
@@ -320,7 +285,15 @@ const GradeSubmissionDetailPage = () => {
                         }
                     </span>
                 </Flex>
-                <Flex gap={24}>
+                <Flex gap={18}>
+                    <span>
+                        <strong>Quarter:</strong>
+                    </span>
+                    <span>
+                        { quarter ? quarter === 1 ? '1st' : '2nd' : '-' }
+                    </span>
+                </Flex>
+                <Flex gap={21}>
                     <span>
                         <strong>Subject:</strong>
                     </span>
@@ -366,7 +339,6 @@ const GradeSubmissionDetailPage = () => {
                     dataSource={studentGradeData.map(data => {
                         return { ...data, key: data._id };
                     })}
-                    size="middle"
                     bordered
                     columns={columns}
                     pagination={{

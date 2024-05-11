@@ -50,6 +50,12 @@ const GradeSubmissionPage = () => {
             render: data => formatSemester(data),
         },
         {
+            title: 'Quarter',
+            dataIndex: 'quarter',
+            key: 'quarter',
+            render: data => data ? data === 1 ? '1st' : '2nd' : '-',
+        },
+        {
             title: 'Reviewer',
             dataIndex: 'name',
             key: 'name',

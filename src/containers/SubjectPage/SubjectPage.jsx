@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, Flex, Table, Typography, Grid } from 'antd';
+import { Button, Flex, Table, Typography, Grid, Modal, Divider } from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { capitalizeFirstLetter, getParamsFromUrl, objectToQueryString } from '../../helpers/general';
 import { NavigationContext } from '../../providers/NavigationProvider';
@@ -10,6 +11,7 @@ import SubjectSearchModal from '../../components/SubjectSearchModal';
 import SubjectConfirmationModal from './components/SubjectConfirmationModal';
 
 const { Link } = Typography;
+const { confirm } = Modal;
 
 const SubjectPage = () => {
     const layoutState = useContext(NavigationContext);
@@ -19,7 +21,7 @@ const SubjectPage = () => {
     const query = getParamsFromUrl();
     const navigate = useNavigate();
     const location = useLocation();
-    const { subjects, loadingSubjects, getSubjects, page, limit, total, loadingSubmit, createSectionSubjects, meta } = useSubject();
+    const { subjects, loadingSubjects, getSubjects, page, limit, total, loadingSubmit, createSectionSubjects, meta, deleteSectionSubjectById } = useSubject();
 
     const [addSubjectModal, setAddSubjectModal] = useState(false);
     const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -37,9 +39,24 @@ const SubjectPage = () => {
         if (meta && meta.code === 200) {
             setConfirmation(false);
             setAddSubjectModal(false);
+            getSubjects();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [meta]);
+
+    const confirmDelete = (id) => {
+        confirm({
+            title: 'Are you sure you want to delete this record?',
+            icon: <ExclamationCircleFilled />,
+            okButtonProps: {
+                danger: true,
+            },
+            okText: 'Delete',
+            onOk: () => {
+                deleteSectionSubjectById(id);
+            },
+        });
+    };
 
     const columns = [
         {
@@ -61,11 +78,21 @@ const SubjectPage = () => {
             key: 'action',
             render: (_, record) => {
                 return (
-                    <Link
-                        onClick={() => navigate(`/subjects/${record._id}`)}
-                    >
-						View
-                    </Link>   
+                    <>
+                        <Link
+                            onClick={() => navigate(`/subjects/${record._id}`)}
+                        >
+                            View
+                        </Link>
+                        <Divider type="vertical"/>
+                        <Link
+                            type="danger"
+                            onClick={() => confirmDelete(record.section_subject_id)}
+                        >
+                            Delete
+                        </Link>
+                    </>
+                    
                 );
             },
         },

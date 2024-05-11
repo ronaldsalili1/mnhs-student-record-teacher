@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { get, post } from '../helpers/request';
+import { del, get, post } from '../helpers/request';
 import { getParamsFromUrl } from '../helpers/general';
 import { NavigationContext } from '../providers/NavigationProvider';
 
@@ -67,6 +67,16 @@ const useSubject = () => {
         setLoadingSubmit(false);
     };
 
+    const deleteSectionSubjectById = async (sectionSubjectId) => {
+        const response = await del({ uri: `/teacher/subjects/${sectionSubjectId}`, navigate, location });
+        if (response?.meta?.code !== 200) {
+            setMeta(response?.meta);
+            return;
+        }
+
+        setMeta(response.meta);
+    };
+
     useEffect(() => {
         getSubjects(query);
 
@@ -105,6 +115,7 @@ const useSubject = () => {
         subjects,
         loadingSubmit,
         createSectionSubjects,
+        deleteSectionSubjectById,
     };
 };
 

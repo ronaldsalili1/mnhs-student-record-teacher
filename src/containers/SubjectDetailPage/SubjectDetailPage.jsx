@@ -148,24 +148,24 @@ const SubjectDetailPage = () => {
                 },
             ],
         },
-        {
-            title: 'Action',
-            dataIndex: 'action',
-            key: 'action',
-            width: 120,
-            render: (_, record) => {
-                return (
-                    <>
-                        <Link
-                            type="danger"
-                            onClick={() => confirmDelete(record.subject_student_id)}
-                        >
-                            Delete
-                        </Link>    
-                    </>
-                );
-            },
-        },
+        // {
+        //     title: 'Action',
+        //     dataIndex: 'action',
+        //     key: 'action',
+        //     width: 120,
+        //     render: (_, record) => {
+        //         return (
+        //             <>
+        //                 <Link
+        //                     type="danger"
+        //                     onClick={() => confirmDelete(record.subject_student_id)}
+        //                 >
+        //                     Delete
+        //                 </Link>    
+        //             </>
+        //         );
+        //     },
+        // },
     ];
 
     return (
@@ -177,7 +177,7 @@ const SubjectDetailPage = () => {
                 style={{ margin: '10px 0px' }}
             >
                 <StudentSearchForm {...subjectDetailProps}/>
-                <Button
+                {/* <Button
                     type="primary"
                     icon={<PlusSquareFilled />}
                     htmlType="submit"
@@ -185,8 +185,8 @@ const SubjectDetailPage = () => {
                     onClick={() => setAddStudentsModal(true)}
                 >
                     Add Students
-                </Button>
-                <Button
+                </Button> */}
+                {/* <Button
                     type="primary"
                     icon={<CloudDownloadOutlined />}
                     htmlType="submit"
@@ -205,7 +205,7 @@ const SubjectDetailPage = () => {
                     }}
                 >
                     Download Template
-                </Button>
+                </Button> */}
             </Flex>
             <Table
                 loading={loadingStudents}
@@ -230,7 +230,7 @@ const SubjectDetailPage = () => {
                     pageSize: limit,
                 }}
             />
-            <StudentSearchModal
+            {/* <StudentSearchModal
                 title="Students"
                 width={800}
                 open={addStudentsModal}
@@ -265,7 +265,7 @@ const SubjectDetailPage = () => {
                 subject={subject}
                 loadingSubmit={loadingSubmit}
                 onConfirm={onAddStudent}
-            />
+            /> */}
         </>
     );
 };

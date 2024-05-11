@@ -11,6 +11,7 @@ const useGradeSubmissionDetail = () => {
     const [reviewers, setReviewers] = useState([]);
     const [studentGradeData, setStudentGradeData] = useState([]);
     const [semester, setSemester] = useState(null);
+    const [quarter, setQuarter] = useState(null);
     const [subject, setSubject] = useState(null);
     const [loadingGrades, setLoadingGrades] = useState(false);
     const [gradeSubmission, setGradeSubmission] = useState(null);
@@ -61,6 +62,7 @@ const useGradeSubmissionDetail = () => {
 
         setGradeSubmission(response?.data?.grade_submission);
         setSemester(response?.data?.semester);
+        setQuarter(response?.data?.quarter);
         setSubject(response?.data?.subject);
         setStudentGradeData(response?.data?.student_grade_data);
         setLoadingGrades(false);
@@ -144,12 +146,14 @@ const useGradeSubmissionDetail = () => {
         studentGradeData,
         setStudentGradeData,
         semester,
+        quarter,
         setSemester,
         subject,
         setSubject,
         loadingGrades,
         setLoadingGrades,
         gradeSubmission,
+        setQuarter,
     };
 };
 
