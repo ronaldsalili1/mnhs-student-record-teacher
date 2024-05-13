@@ -6,7 +6,10 @@ const SkeletonInputNumber = ({ loading, ...rest }) => {
             <div className="skeleton-input-ui">
                 <Skeleton.Input
                     active
-                    style={{ width: '100%' }}
+                    style={{
+                        width: '100%',
+                        ...(rest?.style && { ...rest.style }),
+                    }}
                 />
             </div>
         );

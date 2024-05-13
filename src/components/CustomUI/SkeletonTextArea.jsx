@@ -6,7 +6,11 @@ const SkeletonTextArea = ({ loading, ...rest }) => {
             <div className="skeleton-input-ui">
                 <Skeleton.Input
                     active
-                    style={{ width: '100%', height: 54 }}
+                    style={{
+                        width: '100%',
+                        height: 54,
+                        ...(rest?.style && { ...rest.style }),
+                    }}
                 />
             </div>
         );
