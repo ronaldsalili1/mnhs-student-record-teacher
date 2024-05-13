@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Table, Typography, Flex, Button, Grid, Modal } from 'antd';
+import { Table, Typography, Flex, Button, Grid, Modal, Alert } from 'antd';
 import { PlusSquareFilled, ExclamationCircleFilled } from '@ant-design/icons';
 
 import { formatFullName, getParamsFromUrl, objectToQueryString } from '../../helpers/general';
@@ -9,6 +9,7 @@ import useAdvisee from '../../hooks/useAdvisee';
 import AdviseeSearchForm from './components/AdviseeSearchForm';
 import StudentSearchModal from '../../components/StudentSearchModal';
 import AdviseeConfirmationModal from './components/AdviseeConfirmationModal';
+import { AuthContext } from '../../providers/AuthProvider';
 
 const { confirm } = Modal;
 const { Link } = Typography;
@@ -16,6 +17,8 @@ const { Link } = Typography;
 const AdviseePage = () => {
     const layoutState = useContext(NavigationContext);
     const { setTitle } = layoutState;
+    const { teacher } = useContext(AuthContext);
+    const { sections } = teacher || {};
     const { xs } = Grid.useBreakpoint();
 
     const query = getParamsFromUrl();
@@ -115,6 +118,13 @@ const AdviseePage = () => {
 
     return (
         <>
+            {
+                teacher && sections.length === 0 &&
+                <Alert
+                    message="You are currently not designated as an adviser for any particular section"
+                    type="error"
+                />
+            }
             <Flex
                 justify="end"
                 wrap="wrap"

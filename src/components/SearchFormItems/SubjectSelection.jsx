@@ -64,8 +64,6 @@ const SubjectSelection = ({ formRef, name, defaultValue, width }) => {
             }))}
             onChange={value => {
                 const form = formRef?.current;
-                console.log('🚀 ~ form:', form);
-                console.log('🚀 ~ name:', name);
                 if (name && form) {
                     form.setFieldValue(name, value);
                 }

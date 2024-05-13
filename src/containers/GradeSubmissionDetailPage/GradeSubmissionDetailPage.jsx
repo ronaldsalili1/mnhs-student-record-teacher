@@ -41,6 +41,8 @@ const GradeSubmissionDetailPage = () => {
         loadingGrades,
         gradeSubmission,
         setLoadingGrades,
+        section,
+        setSection,
     } = gradeSubmissionDetailProps;
 
     const [dlTempModal, setDlTempModal] = useState(false);
@@ -71,6 +73,7 @@ const GradeSubmissionDetailPage = () => {
                 setSemester(response?.data?.semester || null);
                 setSubject(response?.data?.subject || null);
                 setQuarter(response?.data?.quarter || null);
+                setSection(response?.data?.section || null);
                 setStudentGradeData(response?.data?.student_grade_data || []);
                 setLoadingGrades(false);
             } else if (status === 'error') {
@@ -214,6 +217,7 @@ const GradeSubmissionDetailPage = () => {
         const fields = {
             ...removeObjNilValues(values),
             subject_id: subject._id,
+            section_id: section._id,
             quarter,
             grades: studentGradeData.map(studentGrade => {
                 const { student, grade } = studentGrade || {};
@@ -281,6 +285,18 @@ const GradeSubmissionDetailPage = () => {
                         closable
                     />
                 }
+                <Flex gap={20}>
+                    <span>
+                        <strong>Section:</strong>
+                    </span>
+                    <span>
+                        {
+                            section ? 
+                                section.name
+                                : '-'
+                        }
+                    </span>
+                </Flex>
                 <Flex gap={10}>
                     <span>
                         <strong>Semester:</strong>
