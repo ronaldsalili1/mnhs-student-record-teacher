@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Input, Flex, theme, Typography, Button, Alert } from 'antd';
 
 import backgroundImg from '../../images/mnhs-bg.webp';
 import mnhsLogo from '../../images/mnhs-logo.webp';
 import { post } from '../../helpers/request';
-import { setAuthenticated } from '../../helpers/localStorage';
+import { getAuthenticated, setAuthenticated } from '../../helpers/localStorage';
 import { getParamsFromUrl } from '../../helpers/general';
 
 import ResetPasswordModal from './components/ResetPasswordModal';
@@ -85,6 +85,18 @@ const LoginPage = () => {
         navigate('/subjects', { replace: true });
     };
 
+    useEffect(() => {
+        const authenticated = getAuthenticated();
+        if (authenticated === 'yes') {
+            const query = getParamsFromUrl();
+            if (query.path) {
+                navigate(query.path, { replace: true });
+            } else {
+                navigate('/subjects');
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <Flex

@@ -1,11 +1,11 @@
 export const getAuthenticated = () => {
-    return localStorage.getItem('authenticated');
+    return localStorage.getItem('teacher_authenticated');
 };
 
 export const setAuthenticated = () => {
-    localStorage.setItem('authenticated', 'yes');
+    localStorage.setItem('teacher_authenticated', 'yes');
 };
 
 export const removeAuthenticated = () => {
-    localStorage.removeItem('authenticated');
+    localStorage.removeItem('teacher_authenticated');
 };
